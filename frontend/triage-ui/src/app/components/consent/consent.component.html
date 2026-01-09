@@ -1,0 +1,23 @@
+<section class="card">
+  <h2>Consent to use AI-assisted triage</h2>
+  <p class="notice">
+    AI is advisory only and does not provide medical diagnoses or treatment. A clinician will review all outputs. Emergency situations must be handled by emergency services immediately.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      Patient ID
+      <input formControlName="patientId" placeholder="e.g., patient-123" />
+    </label>
+    <label>
+      Consent token
+      <input formControlName="consentToken" placeholder="provided token" />
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" formControlName="acknowledged" />
+      I understand this is not a diagnosis and must be reviewed by a clinician.
+    </label>
+    <button type="submit">Continue</button>
+  </form>
+</section>
+

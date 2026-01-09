@@ -1,0 +1,51 @@
+<section class="card">
+  <header>
+    <h2>Symptom intake</h2>
+    <p>Provide symptoms for triage. No diagnoses or treatment will be provided.</p>
+    <p class="warning">Emergency? Call local emergency services immediately.</p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="symptom-row" formArrayName="symptoms" *ngFor="let s of symptoms.controls; let i = index">
+      <input [formControlName]="i" placeholder="Symptom (e.g., chest pain)" />
+      <button type="button" (click)="removeSymptom(i)" [disabled]="symptoms.length === 1">Remove</button>
+    </div>
+    <button type="button" class="ghost" (click)="addSymptom()">Add symptom</button>
+
+    <label>
+      Additional details (optional)
+      <textarea formControlName="freeText" rows="3" placeholder="Describe onset, severity, context"></textarea>
+    </label>
+
+    <label>
+      Pregnancy
+      <select formControlName="pregnancyFlag">
+        <option [ngValue]="null">Prefer not to say / not applicable</option>
+        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">No</option>
+      </select>
+    </label>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Submitting...' : 'Submit and triage' }}
+    </button>
+  </form>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <div class="result" *ngIf="triageResult">
+    <h3>Triage result (advisory)</h3>
+    <p><strong>Acuity:</strong> {{ triageResult.acuity }}</p>
+    <p><strong>Emergency flag:</strong> {{ triageResult.emergencyFlag ? 'Yes' : 'No' }}</p>
+    <p><strong>Rationale:</strong> {{ triageResult.rationale }}</p>
+    <p><strong>Summary for clinician:</strong> {{ triageResult.summaryForClinician }}</p>
+    <p class="warning">AI output is advisory only. Clinician validation required.</p>
+    <div *ngIf="triageResult.clarifyingQuestions?.length">
+      <h4>Clarifying questions</h4>
+      <ul>
+        <li *ngFor="let q of triageResult.clarifyingQuestions">{{ q }}</li>
+      </ul>
+    </div>
+  </div>
+</section>
+

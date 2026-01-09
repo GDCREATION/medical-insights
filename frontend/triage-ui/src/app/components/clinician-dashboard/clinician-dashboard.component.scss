@@ -1,0 +1,39 @@
+.card {
+  max-width: 900px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.summary {
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f8fafc;
+  margin-top: 1rem;
+}
+
+.actions {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+button {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.approve {
+  background: #0f766e;
+  color: #fff;
+}
+
+.override {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+

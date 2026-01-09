@@ -1,0 +1,15 @@
+<section class="hero">
+  <div>
+    <h1>Patient Triage & Symptom Support</h1>
+    <p class="lead">
+      AI assistance is advisory only. No diagnoses or treatment are provided. A clinician must review and approve all outputs.
+    </p>
+    <div class="actions">
+      <button class="primary" (click)="selectRole('patient')">I'm a patient</button>
+      <button class="secondary" (click)="selectRole('clinician')">I'm a clinician</button>
+    </div>
+    <p class="disclaimer">Emergency? Call local emergency services immediately.</p>
+    <p class="state" *ngIf="currentRole()">Current role: {{ currentRole() }}</p>
+  </div>
+</section>
+

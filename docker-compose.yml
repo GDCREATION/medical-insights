@@ -1,0 +1,84 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: medinsights
+      POSTGRES_USER: meduser
+      POSTGRES_PASSWORD: medpass
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meduser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  oidc:
+    image: ghcr.io/navikt/mock-oauth2-server:0.6.8
+    environment:
+      SERVER_PORT: 9999
+    ports:
+      - "9999:9999"
+
+  rule-engine:
+    build: ./services/rule-engine
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8001/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  audit:
+    build: ./services/audit
+    ports:
+      - "8002:8002"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8002/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  agent:
+    build: ./services/agent
+    environment:
+      RULE_ENGINE_URL: http://rule-engine:8001
+      AUDIT_URL: http://audit:8002
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rule-engine
+      - audit
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gateway:
+    build: ./backend/gateway
+    environment:
+      AGENT_URL: http://agent:8000
+      OIDC_ISSUER: http://oidc:9999/default
+    ports:
+      - "8080:8080"
+    depends_on:
+      - agent
+      - oidc
+      - postgres
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - gateway
+

@@ -1,0 +1,18 @@
+<section class="card">
+  <header>
+    <h2>Clinician dashboard</h2>
+    <p>Review AI-assisted triage summaries. AI output is advisory only; override or approve as needed.</p>
+  </header>
+
+  <div class="summary" *ngFor="let item of triageSummaries">
+    <p><strong>Encounter:</strong> {{ item.encounterId }}</p>
+    <p><strong>Acuity:</strong> {{ item.acuity }}</p>
+    <p><strong>Emergency flag:</strong> {{ item.emergencyFlag ? 'Yes' : 'No' }}</p>
+    <p>{{ item.summary }}</p>
+    <div class="actions">
+      <button class="approve">Approve</button>
+      <button class="override">Override</button>
+    </div>
+  </div>
+</section>
+

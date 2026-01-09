@@ -1,0 +1,14 @@
+{
+  "name": "patient-triage-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Frontend wrapper for Patient Triage Angular app (see triage-ui).",
+  "scripts": {
+    "postinstall": "cd triage-ui && npm install",
+    "start": "cd triage-ui && npm start",
+    "build": "cd triage-ui && npm run build -- --configuration=production",
+    "lint": "cd triage-ui && npm run lint",
+    "test": "cd triage-ui && npm test"
+  }
+}
+
