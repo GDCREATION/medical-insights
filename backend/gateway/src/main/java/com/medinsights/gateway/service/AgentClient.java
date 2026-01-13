@@ -30,6 +30,7 @@ public class AgentClient {
         return Objects.requireNonNullElse(result, Encounter.TriageResult.builder()
                 .acuity("unknown")
                 .emergencyFlag(false)
+                .confidenceScore(0.0)
                 .rationale("Agent unreachable; fallback response")
                 .summaryForClinician("Agent unavailable. Please proceed with clinician assessment.")
                 .safetyWarnings("No AI decision. Manual review required.")

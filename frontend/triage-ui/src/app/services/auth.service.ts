@@ -92,6 +92,13 @@ export class AuthService {
     return this.patientIdSig();
   }
 
+  getUserId(): string | null {
+    const user = this.user();
+    if (!user) return null;
+    // Try common user ID fields from Auth0
+    return user.sub || user['user_id'] || user['id '] || null;
+  }
+
   // Check if user has required role
   hasRole(requiredRole: UserRole): boolean {
     const role = this.currentRole();

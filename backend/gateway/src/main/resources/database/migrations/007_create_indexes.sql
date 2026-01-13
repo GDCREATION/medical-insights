@@ -17,7 +17,7 @@ CREATE INDEX IF NOT EXISTS idx_encounters_status_created
 -- Index for querying active encounters that haven't expired
 CREATE INDEX IF NOT EXISTS idx_encounters_active 
     ON encounters(status, expires_at) 
-    WHERE expires_at IS NULL;
+    WHERE expires_at IS NULL OR expires_at > CURRENT_TIMESTAMP;
 
 -- Index for querying triage results by emergency flag and acuity
 CREATE INDEX IF NOT EXISTS idx_triage_results_emergency_acuity 
@@ -31,5 +31,11 @@ CREATE INDEX IF NOT EXISTS idx_clinician_reviews_decision_reviewed
 CREATE INDEX IF NOT EXISTS idx_encounter_events_type_created 
     ON encounter_events(event_type, created_at DESC);
 
+-- Index for full-text search on free_text in symptom_payloads (if using full-text search)
+-- Note: This requires the pg_trgm extension for trigram matching
+-- Uncomment if you plan to use full-text search:
+-- CREATE EXTENSION IF NOT EXISTS pg_trgm;
+-- CREATE INDEX IF NOT EXISTS idx_symptom_payloads_free_text_trgm 
+--     ON symptom_payloads USING GIN (free_text gin_trgm_ops);
 
 COMMIT;

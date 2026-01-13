@@ -7,11 +7,32 @@ agent:
 spring:
   application:
     name: gateway
+  datasource:
+    url: ${SUPABASE_DB_URL:${DATABASE_URL:jdbc:postgresql://db.dguskcfdsiyhgsluvffv.supabase.co:5432/postgres}}
+    username: ${SUPABASE_DB_USER:${DATABASE_USER:postgres}}
+    password: ${SUPABASE_DB_PASSWORD:${DATABASE_PASSWORD:medInsightsUVCreation}}
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: never # We'll handle migrations manually
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
   security:
     oauth2:
       resourceserver:
         jwt:
           issuer-uri: ${AUTH0_ISSUER:https://dev-3lau552vpf734fpb.us.auth0.com/}
+
+database:
+  migration:
+    enabled: ${DATABASE_MIGRATION_ENABLED:true}
+    run-on-startup: ${DATABASE_MIGRATION_RUN_ON_STARTUP:true}
 
 management:
   endpoints:

@@ -19,9 +19,11 @@ public class Encounter {
     @Data
     @Builder
     public static class ClinicianReview {
-        private String decision; // approved|overridden
+        private String decision; // approved|overridden|rejected|needs_more_info
+        private Boolean overrideFlag;
+        private String overrideReason;
         private String notes;
-        private String reviewer;
+        private String reviewerId;
     }
 
     @Data
@@ -29,6 +31,7 @@ public class Encounter {
     public static class TriageResult {
         private String acuity;
         private boolean emergencyFlag;
+        private Double confidenceScore;
         private String rationale;
         private List<String> clarifyingQuestions;
         private String summaryForClinician;

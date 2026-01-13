@@ -9,13 +9,26 @@ export interface SymptomPayload {
 export interface TriageResult {
   acuity: string;
   emergencyFlag: boolean;
-  rationale: string;
-  clarifyingQuestions: string[];
-  summaryForClinician: string;
-  safetyWarnings: string;
+  confidenceScore?: number | null;
+  rationaleInternal?: string;
+  clarifyingQuestions?: string; // Now a string, not array
+  summaryForClinician?: string;
+  safetyWarnings?: string;
   modelVersion?: string;
   adapterVersion?: string;
   ruleVersion?: string;
   traceId?: string;
 }
 
+export interface EncounterResponse {
+  encounterId: string;
+  createdAt: string;
+}
+
+export interface ClinicianReviewPayload {
+  decision: string; // 'approved' | 'overridden' | 'rejected' | 'needs_more_info'
+  overrideFlag?: boolean;
+  overrideReason?: string;
+  notes?: string;
+  reviewerId: string;
+}

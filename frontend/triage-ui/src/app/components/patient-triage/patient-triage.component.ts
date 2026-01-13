@@ -69,14 +69,17 @@ export class PatientTriageComponent {
 
     try {
       if (!this.encounterId) {
-        const created = await firstValueFrom(this.api.createEncounter(patientId, consent));
+        const created = await firstValueFrom(
+          this.api.createEncounter(patientId, consent, 'web')
+        );
         this.encounterId = created?.encounterId ?? null;
       }
       if (!this.encounterId) {
         throw new Error('Failed to create encounter.');
       }
       await firstValueFrom(this.api.submitSymptoms(this.encounterId, payload));
-      this.triageResult = await firstValueFrom(this.api.triage(this.encounterId));
+      const traceId = `trace-${Date.now()}`;
+      this.triageResult = await firstValueFrom(this.api.triage(this.encounterId, traceId));
     } catch (err: any) {
       this.error = err?.message || 'Unable to complete triage. Please try again.';
     } finally {

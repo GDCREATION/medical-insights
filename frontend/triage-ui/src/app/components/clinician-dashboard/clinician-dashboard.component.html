@@ -4,15 +4,78 @@
     <p>Review AI-assisted triage summaries. AI output is advisory only; override or approve as needed.</p>
   </header>
 
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Loading triage summaries...</p>
+
   <div class="summary" *ngFor="let item of triageSummaries">
-    <p><strong>Encounter:</strong> {{ item.encounterId }}</p>
-    <p><strong>Acuity:</strong> {{ item.acuity }}</p>
-    <p><strong>Emergency flag:</strong> {{ item.emergencyFlag ? 'Yes' : 'No' }}</p>
-    <p>{{ item.summary }}</p>
-    <div class="actions">
-      <button class="approve">Approve</button>
-      <button class="override">Override</button>
+    <div *ngIf="selectedEncounterId !== item.encounterId">
+      <p><strong>Encounter:</strong> {{ item.encounterId }}</p>
+      <p><strong>Acuity:</strong> {{ item.acuity }}</p>
+      <p><strong>Emergency flag:</strong> {{ item.emergencyFlag ? 'Yes' : 'No' }}</p>
+      <p *ngIf="item.confidenceScore"><strong>Confidence:</strong> {{ (item.confidenceScore * 100).toFixed(1) }}%</p>
+      <p *ngIf="item.summaryForClinician">{{ item.summaryForClinician }}</p>
+      <p *ngIf="item.safetyWarnings" class="warning"><strong>Safety warnings:</strong> {{ item.safetyWarnings }}</p>
+      <div class="actions">
+        <button (click)="selectEncounter(item.encounterId)">Review</button>
+      </div>
+    </div>
+
+    <div *ngIf="selectedEncounterId === item.encounterId" class="review-form">
+      <h3>Review Encounter: {{ item.encounterId }}</h3>
+      
+      <div class="triage-details">
+        <p><strong>Acuity:</strong> {{ item.acuity }}</p>
+        <p><strong>Emergency flag:</strong> {{ item.emergencyFlag ? 'Yes' : 'No' }}</p>
+        <p *ngIf="item.confidenceScore"><strong>Confidence:</strong> {{ (item.confidenceScore * 100).toFixed(1) }}%</p>
+        <p *ngIf="item.rationaleInternal"><strong>Rationale:</strong> {{ item.rationaleInternal }}</p>
+        <p *ngIf="item.summaryForClinician"><strong>Summary:</strong> {{ item.summaryForClinician }}</p>
+        <p *ngIf="item.safetyWarnings" class="warning"><strong>Safety warnings:</strong> {{ item.safetyWarnings }}</p>
+        <div *ngIf="item.clarifyingQuestions">
+          <strong>Clarifying questions:</strong>
+          <p style="white-space: pre-line">{{ item.clarifyingQuestions }}</p>
+        </div>
+      </div>
+
+      <form (ngSubmit)="submitReview(item.encounterId)">
+        <label>
+          Decision:
+          <select [(ngModel)]="reviewDecision" name="decision" required>
+            <option value="approved">Approve</option>
+            <option value="overridden">Override</option>
+            <option value="rejected">Reject</option>
+            <option value="needs_more_info">Needs More Info</option>
+          </select>
+        </label>
+
+        <label>
+          <input type="checkbox" [(ngModel)]="reviewOverrideFlag" name="overrideFlag" />
+          Override AI recommendation
+        </label>
+
+        <label *ngIf="reviewOverrideFlag">
+          Override reason:
+          <textarea [(ngModel)]="reviewOverrideReason" name="overrideReason" rows="3" 
+                    placeholder="Explain why you are overriding the AI recommendation"></textarea>
+        </label>
+
+        <label>
+          Notes:
+          <textarea [(ngModel)]="reviewNotes" name="notes" rows="3" 
+                    placeholder="Additional clinical notes"></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="submit" [disabled]="submittingReview">
+            {{ submittingReview ? 'Submitting...' : 'Submit Review' }}
+          </button>
+          <button type="button" (click)="selectedEncounterId = null">Cancel</button>
+        </div>
+      </form>
     </div>
   </div>
+
+  <p *ngIf="!loading && triageSummaries.length === 0">
+    No triage summaries available for review.
+  </p>
 </section>
 
