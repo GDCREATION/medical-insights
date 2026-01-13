@@ -1,0 +1,166 @@
+// Shared styles for all components
+// Variables
+$primary: #0d9488;
+$primary-dark: #0f766e;
+$secondary: #6366f1;
+$text-dark: #0f172a;
+$text-muted: #64748b;
+$bg-light: #f8fafc;
+$bg-card: #ffffff;
+$danger: #dc2626;
+$warning: #f59e0b;
+$success: #10b981;
+$border-radius: 16px;
+$border-radius-sm: 12px;
+$border-radius-lg: 20px;
+
+// Common button styles
+%btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: $border-radius-sm;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  font-family: inherit;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-primary {
+  @extend %btn-base;
+  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba($primary, 0.3);
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba($primary, 0.4);
+  }
+}
+
+.btn-secondary {
+  @extend %btn-base;
+  background: $bg-card;
+  color: $text-dark;
+  border: 1px solid #e2e8f0;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+}
+
+.btn-danger {
+  @extend %btn-base;
+  background: linear-gradient(135deg, $danger 0%, #b91c1c 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba($danger, 0.3);
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba($danger, 0.4);
+  }
+}
+
+// Common card styles
+%card-base {
+  background: $bg-card;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.card {
+  @extend %card-base;
+  padding: 2rem;
+}
+
+// Common page container
+.page-container {
+  min-height: 100vh;
+  background: $bg-light;
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-content {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+// Common typography
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+}
+
+.page-subtitle {
+  font-size: 1.125rem;
+  color: $text-muted;
+  margin: 0 0 2rem;
+  line-height: 1.6;
+}
+
+// Icon styles
+.icon-large {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 1.5rem;
+}
+
+.icon-container {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  box-shadow: 0 10px 40px rgba($danger, 0.2);
+
+  svg {
+    width: 60px;
+    height: 60px;
+    color: $danger;
+  }
+}
+
+// Responsive
+@media (max-width: 600px) {
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .page-subtitle {
+    font-size: 1rem;
+  }
+
+  .icon-container {
+    width: 100px;
+    height: 100px;
+
+    svg {
+      width: 50px;
+      height: 50px;
+    }
+  }
+}

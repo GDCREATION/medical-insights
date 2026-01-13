@@ -11,7 +11,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: ${OIDC_ISSUER:http://localhost:9999/realms/demo}
+          issuer-uri: ${AUTH0_ISSUER:https://dev-3lau552vpf734fpb.us.auth0.com/}
 
 management:
   endpoints:
@@ -19,3 +19,6 @@ management:
       exposure:
         include: health,info
 
+auth0:
+  domain: ${AUTH0_DOMAIN:dev-3lau552vpf734fpb.us.auth0.com}
+  audience: ${AUTH0_AUDIENCE:https://api.medical-insights.com}

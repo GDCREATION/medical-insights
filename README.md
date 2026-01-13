@@ -45,3 +45,5 @@ Images are referenced as `:latest` for brevity—replace with registry-published
 - Swap placeholder frontend with a real Angular app using consent-first flows and role-based dashboards.
 - Replace in-memory storage in gateway with PostgreSQL persistence and audit pointers.
 - Add real JWT validation keys, mTLS between services, and production-grade observability (OTel).
+
+Java download : winget install Amazon.Corretto.17.JDK --accept-package-agreements --accept-source-agreements

@@ -1,0 +1,75 @@
+<div class="page-container">
+  <div class="page-content">
+    <div class="icon-container">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+    </div>
+
+    <h1 class="page-title">Access Restricted</h1>
+    
+    <p class="page-subtitle">
+      You don't have permission to access this page. This area requires specific role-based access.
+    </p>
+
+    <div class="card">
+      <div class="info-section">
+        <div class="info-item">
+          <span class="info-icon">🔒</span>
+          <div class="info-content">
+            <h3>Role-Based Access</h3>
+            <p>This page is restricted to users with specific roles (patient, clinician, or admin).</p>
+          </div>
+        </div>
+        
+        <div class="info-item">
+          <span class="info-icon">👤</span>
+          <div class="info-content">
+            <h3>Current Status</h3>
+            <p *ngIf="isAuthenticated()">
+              You are logged in, but your account doesn't have the required permissions.
+            </p>
+            <p *ngIf="!isAuthenticated()">
+              You need to sign in with an account that has the appropriate role.
+            </p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <span class="info-icon">💡</span>
+          <div class="info-content">
+            <h3>What to Do</h3>
+            <p>
+              Contact your administrator to request access, or return to the home page to explore available features.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" (click)="goHome()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Go to Home</span>
+      </button>
+
+      <button class="btn-secondary" *ngIf="isAuthenticated()" (click)="logout()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+        <span>Sign Out</span>
+      </button>
+    </div>
+
+    <div class="help-text">
+      <p>Need help? Contact support or check your account permissions.</p>
+    </div>
+  </div>
+</div>

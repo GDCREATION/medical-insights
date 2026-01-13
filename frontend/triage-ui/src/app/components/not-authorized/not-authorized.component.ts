@@ -1,32 +1,28 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { NgIf } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-not-authorized',
   standalone: true,
-  imports: [RouterLink],
-  template: `
-    <section class="card">
-      <h2>Access restricted</h2>
-      <p>You do not have access to this area. Please select a role.</p>
-      <a routerLink="/" class="link">Return to landing</a>
-    </section>
-  `,
-  styles: [
-    `
-      .card {
-        max-width: 600px;
-        margin: 1.5rem auto;
-        padding: 1.5rem;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        background: #fff;
-      }
-      .link {
-        color: #0f766e;
-      }
-    `,
-  ],
+  imports: [RouterLink, NgIf],
+  templateUrl: './not-authorized.component.html',
+  styleUrls: ['./not-authorized.component.scss', '../../shared/styles.scss'],
 })
-export class NotAuthorizedComponent {}
+export class NotAuthorizedComponent {
+  private router = inject(Router);
+  auth = inject(AuthService);
 
+  goHome() {
+    this.router.navigateByUrl('/');
+  }
+
+  isAuthenticated() {
+    return this.auth.isAuthenticated();
+  }
+
+  logout() {
+    this.auth.logout();
+  }
+}
