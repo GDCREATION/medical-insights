@@ -5,7 +5,7 @@ This repository contains a production-minded scaffold for a safe, non-diagnostic
 ## Services
 - `frontend/` (placeholder): role-based UI placeholder with consent and safety disclaimers.
 - `backend/gateway/` (Spring Boot): OAuth2 resource server, RBAC-ready, orchestrates triage, persists encounters (in-memory demo), calls agent service.
-- `services/agent/` (FastAPI): planner + tool stub, calls deterministic rule engine first, summarizes with safety filter, logs to audit.
+- `services/agent/` (FastAPI): AI-powered planner with fine-tuned Llama models (medical LoRA adapter + safety adapter), calls deterministic rule engine first, generates clinician summaries and clarifying questions with safety filter, logs to audit.
 - `services/rule-engine/` (FastAPI): deterministic rules for acuity and emergency flags.
 - `services/audit/` (FastAPI): append-only hash-chained audit log.
 - `deploy/k8s/`: Kubernetes manifests for namespace, gateway, agent, rule engine, audit, postgres, frontend.

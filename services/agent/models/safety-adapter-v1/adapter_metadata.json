@@ -1,0 +1,6 @@
+{
+  "adapter": "safety-adapter-v1",
+  "base_model": "meta-llama/Llama-2-7b-hf",
+  "medical_adapter": "/content/drive/MyDrive/llama-lora-safe-0.1",
+  "epochs": 5
+}

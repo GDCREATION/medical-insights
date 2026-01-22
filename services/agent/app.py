@@ -1,14 +1,43 @@
 import os
+import logging
 from typing import List, Optional, Dict, Any
+from pathlib import Path
+
+# Load environment variables from .env file in project root
+try:
+    from dotenv import load_dotenv
+    # Load .env from project root (parent of services/agent)
+    project_root = Path(__file__).parent.parent.parent
+    env_file = project_root / ".env"
+    if env_file.exists():
+        load_dotenv(env_file)
+        logging.info(f"Loaded .env file from: {env_file}")
+    else:
+        logging.warning(f".env file not found at: {env_file}")
+except ImportError:
+    # dotenv not installed, continue without it
+    pass
+except Exception as e:
+    logging.warning(f"Error loading .env file: {e}")
 
 import httpx
 from fastapi import FastAPI, Header
 from pydantic import BaseModel, Field
 
+# ML Model Service
+try:
+    from ml_model_service import get_model_service
+    ML_MODEL_AVAILABLE = True
+except ImportError:
+    ML_MODEL_AVAILABLE = False
+    logging.warning("ML model service not available. Using fallback functions.")
+
 RULE_ENGINE_URL = os.environ.get("RULE_ENGINE_URL", "http://localhost:8001")
 AUDIT_URL = os.environ.get("AUDIT_URL", "http://localhost:8002")
+USE_ML_MODEL = os.environ.get("USE_ML_MODEL", "true").lower() == "true" and ML_MODEL_AVAILABLE
 
 app = FastAPI(title="Agent Service", version="0.1.0")
+logger = logging.getLogger(__name__)
 
 
 class SymptomPayload(BaseModel):
@@ -61,7 +90,8 @@ def safety_filter(text: str) -> str:
     return filtered
 
 
-def summarise_for_clinician(rule_result: dict, symptoms: SymptomPayload) -> str:
+def _summarise_for_clinician_fallback(rule_result: dict, symptoms: SymptomPayload) -> str:
+    """Fallback function when ML model is not available"""
     bullets = [
         f"Acuity: {rule_result.get('acuity')}",
         f"Emergency flag: {rule_result.get('emergencyFlag')}",
@@ -73,11 +103,54 @@ def summarise_for_clinician(rule_result: dict, symptoms: SymptomPayload) -> str:
     return safety_filter(summary)
 
 
-def clarifying_questions(symptoms: SymptomPayload) -> List[str]:
+def summarise_for_clinician(rule_result: dict, symptoms: SymptomPayload) -> str:
+    """Generate clinician summary using ML model or fallback"""
+    if USE_ML_MODEL:
+        try:
+            model_service = get_model_service()
+            if model_service.is_loaded():
+                summary = model_service.generate_clinician_summary(
+                    rule_result=rule_result,
+                    symptoms=symptoms.symptoms,
+                    free_text=symptoms.freeText,
+                )
+                # Apply safety filter as secondary check
+                return safety_filter(summary)
+            else:
+                logger.warning("Model not loaded, using fallback")
+        except Exception as e:
+            logger.error(f"Error generating summary with ML model: {e}", exc_info=True)
+    
+    # Fallback to hardcoded function
+    return _summarise_for_clinician_fallback(rule_result, symptoms)
+
+
+def _clarifying_questions_fallback(symptoms: SymptomPayload) -> List[str]:
+    """Fallback function when ML model is not available"""
     questions = ["When did the symptoms start?", "Any change in severity?", "Any relevant medical history?"]
     if "chest pain" in [s.lower() for s in symptoms.symptoms]:
         questions.append("Is the chest pain crushing or radiating to arm/jaw?")
     return questions
+
+
+def clarifying_questions(symptoms: SymptomPayload) -> List[str]:
+    """Generate clarifying questions using ML model or fallback"""
+    if USE_ML_MODEL:
+        try:
+            model_service = get_model_service()
+            if model_service.is_loaded():
+                questions = model_service.generate_clarifying_questions(
+                    symptoms=symptoms.symptoms,
+                    free_text=symptoms.freeText,
+                )
+                return questions
+            else:
+                logger.warning("Model not loaded, using fallback")
+        except Exception as e:
+            logger.error(f"Error generating questions with ML model: {e}", exc_info=True)
+    
+    # Fallback to hardcoded function
+    return _clarifying_questions_fallback(symptoms)
 
 
 @app.post("/triage", response_model=TriageResult)
@@ -110,7 +183,27 @@ async def triage(request: TriageRequest, x_trace_id: Optional[str] = Header(defa
     return result
 
 
+@app.on_event("startup")
+async def startup_event():
+    """Load ML model on startup if available"""
+    if USE_ML_MODEL:
+        try:
+            logger.info("Loading ML model on startup...")
+            model_service = get_model_service()
+            model_service.load_model()
+            logger.info("ML model loaded successfully")
+        except Exception as e:
+            logger.error(f"Error loading ML model: {e}", exc_info=True)
+            logger.warning("Falling back to hardcoded functions")
+
+
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    """Health check endpoint"""
+    status = {
+        "status": "ok",
+        "ml_model_enabled": USE_ML_MODEL,
+        "ml_model_loaded": get_model_service().is_loaded() if USE_ML_MODEL and ML_MODEL_AVAILABLE else False,
+    }
+    return status
 
